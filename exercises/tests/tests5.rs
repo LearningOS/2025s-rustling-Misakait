@@ -28,11 +28,13 @@
 ///
 /// The `address` must contain a mutable reference to a valid `u32` value.
 unsafe fn modify_by_address(address: usize) {
-    // TODO: Fill your safety notice of the code block below to match your
-    // code's behavior and the contract of this function. You may use the
-    // comment of the test below as your format reference.
+    // SAFETY: We assume that the provided `address` is valid and contains a mutable reference to a `u32` value.
+    // By casting the `usize` to a `*mut u32` pointer, we are relying on the contract of the function
+    // that the address is indeed pointing to a valid `u32` in memory. Then we dereference this pointer
+    // to modify the value at that memory location
     unsafe {
-        todo!("Your code goes here")
+        let ptr = address as *mut u32;
+        *ptr = 0xAABBCCDD
     }
 }
 
