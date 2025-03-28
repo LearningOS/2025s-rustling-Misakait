@@ -6,7 +6,7 @@
 //
 // Execute `rustlings hint from_into` or use the `hint` watch subcommand for a
 // hint.
-
+#![feature(let_chains)]
 #[derive(Debug)]
 struct Person {
     name: String,
@@ -43,7 +43,16 @@ impl Default for Person {
 // I AM NOT DONE
 
 impl From<&str> for Person {
+
     fn from(s: &str) -> Person {
+       let mut iter =  s.split(',');
+        if let Some(x) = iter.next() && let Some(age) =iter.next() &&  let Ok(b) = age.parse::<usize>()&& b!=1  &&let None = iter.next(){
+            return Person{
+                name: String::from(x),
+                age: b,
+            }
+        }
+        Person::default()
     }
 }
 

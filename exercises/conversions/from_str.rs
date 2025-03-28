@@ -52,6 +52,48 @@ enum ParsePersonError {
 impl FromStr for Person {
     type Err = ParsePersonError;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        s.split(',')
+            .map(|part| part.trim())
+            .collect::<Vec<&str>>()
+            .into_iter()
+            .enumerate()
+            .fold({
+                      // 前置检查：空字符串和字段数量
+                      if s.is_empty() {
+                          return Err(ParsePersonError::Empty);
+                      }
+                      let parts_count = s.split(',').count();
+                      if parts_count != 2 {
+                          return Err(ParsePersonError::BadLen);
+                      }
+                      // 初始化折叠器
+                      Ok(Person {
+                          name: String::new(),
+                          age: 0,
+                      })
+                  }, |acc, (i, part)| {
+                acc.and_then(|mut person| match i {
+                    0 => {
+                        if part.is_empty() {
+                            Err(ParsePersonError::NoName)
+                        } else {
+                            person.name = part.to_string();
+                            Ok(person)
+                        }
+                    }
+                    1 => {
+                        part.parse::<usize>()
+                            .map(|age| {
+                                person.age = age;
+                                person
+                            })
+                            .map_err(ParsePersonError::ParseInt)
+                    }
+                    _ => Err(ParsePersonError::BadLen),
+                })
+            })
+
+
     }
 }
 
